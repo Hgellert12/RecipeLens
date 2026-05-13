@@ -1,4 +1,8 @@
 package com.hajdugellert.recipeproject.service;
+import com.hajdugellert.recipeproject.dto.CreateRecipeRequest;
+import com.hajdugellert.recipeproject.dto.RecipeResponse;
+import com.hajdugellert.recipeproject.dto.UpdateRecipeRequest;
+import com.hajdugellert.recipeproject.mapper.RecipeMapper;
 import com.hajdugellert.recipeproject.repository.RecipeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,54 +16,87 @@ public class RecipeService {
 @Autowired
 private RecipeRepository recipeRepository;
 
-public Recipe createRecipe(Recipe recipe)
+public RecipeResponse createRecipe(CreateRecipeRequest request)
 {
-    return recipeRepository.save(recipe);
+    Recipe recipe = RecipeMapper.toEntity(request);
+    Recipe savedRecipe = recipeRepository.save(recipe);
+    return RecipeMapper.toResponse(savedRecipe);
 }
-public List<Recipe> getAllRecipes()
+public List<RecipeResponse> getAllRecipes()
 {
-    return recipeRepository.findAll();
+    List<Recipe> recipeList = recipeRepository.findAll();
+    return recipeList.stream().map(RecipeMapper::toResponse).toList();
 }
-public Recipe getRecipeById(Long ID)
+public RecipeResponse getRecipeById(Long id)
 {
-    return recipeRepository.findById(ID).orElseThrow(() -> new RuntimeException("Recipe not found"));
+    Recipe recipe = findRecipeEntityById(id);
+    return RecipeMapper.toResponse(recipe);
+}
+public List<RecipeResponse> getByName(String name)
+{
+    List<Recipe> recipeList = recipeRepository.findByNameContainingIgnoreCase(name);
+    return recipeList.stream().map(RecipeMapper::toResponse).toList();
+}
+public List<RecipeResponse> getByCategory(String category)
+{
+    List<Recipe> recipeList = recipeRepository.findByCategoryIgnoreCase(category);
+    return  recipeList.stream().map(RecipeMapper::toResponse).toList();
+}
+public List<RecipeResponse> getByFavorite(Boolean favorite)
+{
+    List<Recipe> recipeList = recipeRepository.findByFavorite(favorite);
+    return recipeList.stream().map(RecipeMapper::toResponse).toList();
+}
+public RecipeResponse updateRecipe(Long id, UpdateRecipeRequest newRecipe)
+{
+    Recipe recipe = findRecipeEntityById(id);
+    if(newRecipe.name() != null)
+    {
+        recipe.setName(newRecipe.name());
+    }
+    if(newRecipe.cost() != null)
+    {
+        recipe.setCost(newRecipe.cost());
+    }
+    if(newRecipe.description() != null)
+    {
+        recipe.setDescription(newRecipe.description());
+    }
+    if(newRecipe.ingredients() != null)
+    {
+        recipe.setIngredients(newRecipe.ingredients());
+    }
+    if(newRecipe.instructions() != null)
+    {
+        recipe.setInstructions(newRecipe.instructions());
+    }
+    if(newRecipe.prepTime() != null)
+    {
+        recipe.setPrepTime(newRecipe.prepTime());
+    }
+    if(newRecipe.category() != null)
+    {
+        recipe.setCategory(newRecipe.category());
+    }
 
+    Recipe savedRecipe = recipeRepository.save(recipe);
+    return RecipeMapper.toResponse(savedRecipe);
 }
-public List<Recipe> getByName(String name)
+public void deleteRecipe(Long id)
 {
-    return recipeRepository.findByNameContainingIgnoreCase(name);
-}
-public List<Recipe> getByCategory(String category)
-{
-    return recipeRepository.findByCategoryIgnoreCase(category);
-}
-public List<Recipe> getByFavorite(Boolean Favorite)
-{
-    return recipeRepository.findByFavorite(Favorite);
-}
-public Recipe updateRecipe(Long id, Recipe newRecipe)
-{
-    Recipe recipe = getRecipeById(id);
-    recipe.setName(newRecipe.getName());
-    recipe.setCost(newRecipe.getCost());
-    recipe.setDescription(newRecipe.getDescription());
-    recipe.setIngredients(newRecipe.getIngredients());
-    recipe.setInstructions(newRecipe.getInstructions());
-    recipe.setPrepTime(newRecipe.getPrepTime());
-    recipe.setCategory(newRecipe.getCategory());
-    recipe.setFavorite(newRecipe.getFavorite());
-    return recipeRepository.save(recipe);
-}
-public void deleteRecipe(Long ID)
-{
-    Recipe recipe = getRecipeById(ID);
+    Recipe recipe = findRecipeEntityById(id);
     recipeRepository.delete(recipe);
 
 
 }
-public List<Recipe> getByUser(String writtenby)
+public List<RecipeResponse> getByUser(String writtenBy)
     {
-        return recipeRepository.findByWrittenByUsernameIgnoreCase(writtenby);
+        List<Recipe> recipeList = recipeRepository.findByWrittenByUsernameIgnoreCase(writtenBy);
+        return recipeList.stream().map(RecipeMapper::toResponse).toList();
+    }
+    private Recipe findRecipeEntityById(Long id) {
+        return recipeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Recipe not found with id: " + id));
     }
 
 }
