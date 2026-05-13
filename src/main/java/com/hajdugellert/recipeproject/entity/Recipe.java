@@ -23,6 +23,12 @@ public class Recipe {
     private String description;
     @NotBlank
     private String category;
+    @ElementCollection
+    @CollectionTable(
+            name = "recipe_ingredients",
+            joinColumns = @JoinColumn(name = "recipe_id")
+    )
+    @Column(name = "ingredient")
     private List<String> ingredients;
     @NotBlank
     private String instructions;
