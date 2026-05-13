@@ -1,7 +1,11 @@
 package com.hajdugellert.recipeproject.controller;
-import com.hajdugellert.recipeproject.entity.Recipe;
+import com.hajdugellert.recipeproject.dto.CreateRecipeRequest;
+import com.hajdugellert.recipeproject.dto.RecipeResponse;
+import com.hajdugellert.recipeproject.dto.UpdateRecipeRequest;
 import jakarta.validation.Valid;
 import com.hajdugellert.recipeproject.service.RecipeService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -15,51 +19,54 @@ public class RecipeController {
         this.recipeService = recipeService;
     }
     @PostMapping
-    public Recipe createRecipe(@Valid @RequestBody Recipe newRecipe)
+    public ResponseEntity<RecipeResponse> createRecipe(@Valid @RequestBody CreateRecipeRequest newRecipe)
     {
-        return recipeService.createRecipe(newRecipe);
+        return ResponseEntity.status(HttpStatus.CREATED).body(recipeService.createRecipe(newRecipe));
     }
     @GetMapping
-    public List<Recipe> getAllRecipes()
+    public ResponseEntity<List<RecipeResponse>> getAllRecipes()
     {
-        return recipeService.getAllRecipes();
+        return ResponseEntity.ok(recipeService.getAllRecipes());
     }
     @GetMapping("/{id}")
-    public Recipe getRecipeById(@PathVariable Long id)
+    public ResponseEntity<RecipeResponse> getRecipeById(@PathVariable Long id)
     {
-        return recipeService.getRecipeById(id);
+        return ResponseEntity.ok(recipeService.getRecipeById(id));
     }
-    @PutMapping("/{id}")
-    public Recipe updateRecipe(@PathVariable Long id, @Valid @RequestBody Recipe recipe)
+    @PatchMapping("/{id}")
+    public ResponseEntity<RecipeResponse> updateRecipe(@PathVariable Long id, @Valid @RequestBody UpdateRecipeRequest recipe)
     {
-        return recipeService.updateRecipe(id, recipe);
+
+        return ResponseEntity.ok(recipeService.updateRecipe(id, recipe));
     }
     @DeleteMapping("/{id}")
-    public void deleteRecipe(@PathVariable Long id)
+    public ResponseEntity<Void> deleteRecipe(@PathVariable Long id)
     {
         recipeService.deleteRecipe(id);
+        return ResponseEntity.noContent().build();
     }
     @GetMapping("/search")
-    public List<Recipe> getRecipeByName(@RequestParam String name)
+    public ResponseEntity<List<RecipeResponse>> getRecipeByName(@RequestParam String name)
     {
-        return recipeService.getByName(name);
+
+        return ResponseEntity.ok(recipeService.getByName(name));
     }
 
     @GetMapping("/category/{category}")
-    public List<Recipe> getRecipeByCategory(@PathVariable String category)
+    public ResponseEntity<List<RecipeResponse>> getRecipeByCategory(@PathVariable String category)
     {
-        return recipeService.getByCategory(category);
+        return ResponseEntity.ok(recipeService.getByCategory(category));
     }
 
     @GetMapping("/favorites")
-    public List<Recipe> getFavoriteRecipes()
+    public ResponseEntity<List<RecipeResponse>> getFavoriteRecipes()
     {
-        return recipeService.getByFavorite(true);
+        return ResponseEntity.ok(recipeService.getByFavorite(true));
     }
     @GetMapping("/user/{username}")
-    public List<Recipe> getRecipesByUser(@PathVariable String username)
+    public ResponseEntity<List<RecipeResponse>> getRecipesByUser(@PathVariable String username)
     {
-        return recipeService.getByName(username);
+        return ResponseEntity.ok(recipeService.getByUser(username));
     }
 
 
