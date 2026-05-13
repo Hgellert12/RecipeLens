@@ -20,6 +20,7 @@ public record CreateRecipeRequest(
         List<@NotBlank(message = "Ingredients cannot be blank") String> ingredients,
 
         @NotBlank(message = "Instructions are required")
+        @Size(min = 10, message = "Instructions must contain at least 10 characters")
         String instructions,
 
         @NotNull(message = "Preparation time is required")
