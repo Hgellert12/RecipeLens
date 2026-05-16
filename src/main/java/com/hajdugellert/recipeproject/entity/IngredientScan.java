@@ -25,7 +25,7 @@ public class IngredientScan {
     private List<String> detectedLabels;
     @ElementCollection
     @CollectionTable(name = "detected_ingredients", joinColumns = @JoinColumn(name = "scan_id"))
-    @Column
+    @Column(name = "ingredient")
     private List<String> detectedIngredients;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate createdAt = LocalDate.now();
