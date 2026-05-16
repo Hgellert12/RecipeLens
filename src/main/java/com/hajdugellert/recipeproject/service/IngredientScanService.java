@@ -6,12 +6,13 @@ import com.hajdugellert.recipeproject.mapper.IngredientScanMapper;
 import com.hajdugellert.recipeproject.repository.IngredientScanRepository;
 import com.hajdugellert.recipeproject.vision.GoogleVisionClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
+@Service
 public class IngredientScanService {
     @Autowired
     private IngredientScanRepository ingredientScanRepository;
